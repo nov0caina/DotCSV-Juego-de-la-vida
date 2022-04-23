@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 import pygame
-import time, os
+import time, os, random
 import numpy as np
 
 # Hago que la ventana aparezca centrada en Windows
@@ -11,7 +11,7 @@ os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.init()
 
 # Establezco el título de la ventana:
-pygame.display.set_caption("Juego de la vida - Jonatandb")
+pygame.display.set_caption("Juego de la vida")
 
 # Carga el icono si existe
 iconPath = "./icono.ico"
@@ -30,7 +30,7 @@ width, height = 700, 700
 screen = pygame.display.set_mode((height, width))
 
 # Color de fondo, casi negro
-bg = 25, 25, 25
+bg = 225, 225, 225
 
 # Pinto el fondo con el color elegido (bg)
 screen.fill(bg)
@@ -92,6 +92,9 @@ endGame = False
 
 # Acumulador de cantidad de iteraciones:
 iteration = 0
+
+#Array de colores para las celulas vivas
+colorsArray = [0, 0, 0]
 
 # Bucle de ejecución principal (Main Loop):
 while not endGame:
@@ -166,7 +169,18 @@ while not endGame:
         for x in range(0, nyC):
 
             if not pauseExec:
-
+                
+                #Genero los colores aleatorios para el array colorsArray
+                i = 0
+                for item in colorsArray:
+                    if colorsArray[i] >= 253:
+                        colorsArray[i] = 0
+                    else:
+                        colorsArray[i] = item + random.randint(1,50)
+                    if colorsArray[i] >= 255:
+                        colorsArray[i] = random.randint(1,254)
+                    i += 1
+                
                 # Cálculo del número de vecinos cercanos
                 n_neigh = (
                     gameState[(x - 1) % nxC, (y - 1) % nyC]
@@ -206,17 +220,17 @@ while not endGame:
                 # screen          -> Pantalla donde dibujar
                 # (128, 128, 128) -> Color a utilizar para dibujar, en este caso un gris
                 # poly            -> Puntos que definan al poligono que se está dibujando
-                pygame.draw.polygon(screen, (128, 128, 128), poly, 1)
+                pygame.draw.polygon(screen, (128, 128, 128  ), poly, 1)
             else:
                 if pauseExec:
                     # Con el juego pausado pinto de gris las celdas
                     pygame.draw.polygon(screen, (128, 128, 128), poly, 0)
                 else:
-                    # Con el juego ejecutándose pinto de blanco las celdas
-                    pygame.draw.polygon(screen, (255, 255, 255), poly, 0)
+                    # Con el juego ejecutándose pinto las celdas
+                    pygame.draw.polygon(screen, colorsArray, poly, 0)
 
     # Actualizo el título de la ventana
-    title = f"Juego de la vida - Jonatandb - Población: {population} - Generación: {iteration}"
+    title = f"Juego de la vida - Población: {population} - Generación: {iteration}"
     if pauseExec:
         title += " - [PAUSADO]"
     pygame.display.set_caption(title)
@@ -228,4 +242,4 @@ while not endGame:
     # Muestro y actualizo los fotogramas en cada iteración del bucle principal
     pygame.display.flip()
 
-print("Juego finalizado - jonatandb@gmail.com")
+print("Juego finalizado")
